@@ -1,0 +1,22 @@
+{
+    "name": "spoolphiz/events",
+    "description": "",
+    "authors": [
+        {
+            "name": "Alexander Manea",
+            "email": "alexander.manea@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "illuminate/support": "4.0.x",
+		"redefinelab/geocoder": "dev-master"
+    },
+    "autoload": {
+		
+		"psr-0": {
+		            "Spoolphiz\\Events": "src/"
+		}
+    },
+    "minimum-stability": "dev"
+}
