@@ -10,17 +10,18 @@ class EloquentEventRepository implements EventRepository {
 	/**
 	 * get a single event by id, first checks to make sure the current auth'd user has permission to view
 	 *
-	 * @param $eventId  The id of the event
-	 * @param $user  Spoolphiz\Events\Models\Eloquent\User object
+	 * @param $eventId  	The id of the event
+	 * @param $user  		Spoolphiz\Events\Models\Eloquent\User object
+	 * @param $accessType  	string - 'create', 'read', 'update', 'delete'
 	 *
 	 * @return array
 	 */
-	public function findWithAccess($eventId, $user) 
+	public function findWithAccess($eventId, $user, $accessType = 'read') 
 	{
 		$data = '';
 		
 		//$event = Event::find($eventId);
-		$events = Event::with('instructors')->where('id', '=', $eventId)->get();
+		$events = Event::with('instructors', 'attendees', 'venue')->where('id', '=', $eventId)->get();
 		
 		if( $events->isEmpty() )
 		{
@@ -30,7 +31,7 @@ class EloquentEventRepository implements EventRepository {
 		{
 			$event = $events->first();
 			
-			if( !$event->allowAccess('read', $user) )
+			if( !$event->allowAccess($accessType, $user) )
 			{
 				App::abort(401, 'You are not allowed to access this event.');
 			}
@@ -89,6 +90,7 @@ class EloquentEventRepository implements EventRepository {
 	 *
 	 * @return bool
 	 */
+	/*
 	public function delete($eventId)
 	{
 		$event = Event::find($eventId);
@@ -105,5 +107,6 @@ class EloquentEventRepository implements EventRepository {
 		
 		return false;
 	}
+	*/
 	
 }

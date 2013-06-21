@@ -32,5 +32,25 @@ class Attendee extends Eloquent {
 	 */
 	protected $table = 'attendees';
 	
+	
+	
+	/*
+	* Relationships
+	*/
+	public function event()
+	{
+		return $this->belongsTo('Spoolphiz\Events\Models\Eloquent\Event');
+	}
+	
+	
+	/**
+	 * Validate the model's attributes.
+	 *
+	 * @return void
+	 */
+	public function validate() 
+	{
+		//TODO: do the damn thang
+	}
 	 
 }

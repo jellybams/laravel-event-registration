@@ -2,7 +2,8 @@
 namespace Spoolphiz\Events\Models\Eloquent;
 use \Eloquent;
 use \Validator;
-use Attendee;
+use Spoolphiz\Events\Models\Eloquent\Attendee;
+use Spoolphiz\Events\Models\Eloquent\Venue;
 
 class Event extends Eloquent {
 	
@@ -41,13 +42,19 @@ class Event extends Eloquent {
 	 */
 	public function attendees()
     {
-        return $this->hasMany('Attendee');
+        return $this->hasMany('Spoolphiz\Events\Models\Eloquent\Attendee');
     }
 
 	public function instructors()
     {
-        return $this->belongsToMany('User', 'event_instructor', 'event_id', 'user_id')->where('role_id', '=', $this->userRoleIds['INSTRUCTOR']);
+        return $this->belongsToMany('Spoolphiz\Events\Models\Eloquent\User', 'event_instructor', 'event_id', 'user_id')
+					->where('role_id', '=', $this->userRoleIds['INSTRUCTOR']);
     }
+
+	public function venue()
+	{
+		return $this->belongsTo('Spoolphiz\Events\Models\Eloquent\Venue');
+	}
 
 	
 	/**
@@ -88,12 +95,26 @@ class Event extends Eloquent {
 	 * decides if a user is allowed CRUD access to this resource - only happens if
 	 * the user is admin, sales rep or listed as an instructor on the event
 	 *
+	 * @param $type		string - 'create', 'read', 'update', 'delete'
+	 * @param $user		Spoolphiz\Events\Models\Eloquent\User
+	 *
 	 * @return bool
 	 */
 	public function allowAccess( $type, $user ) 
 	{	
 		switch( $type )
 		{
+			case 'create':
+			case 'update':
+			case 'delete':
+				if( $user->isAdmin() )
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
 			case 'read':
 				if( $user->isAdmin() || $user->isSalesRep() )
 				{

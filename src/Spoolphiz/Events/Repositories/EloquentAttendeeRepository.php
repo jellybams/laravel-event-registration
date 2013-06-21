@@ -1,60 +1,50 @@
 <?php
 namespace Spoolphiz\Events\Repositories;
 use \App;
+use \Auth;
+use Spoolphiz\Events\Interfaces\AttendeeRepository;
 use Spoolphiz\Events\Models\Eloquent\Attendee;
 
 class EloquentAttendeeRepository implements AttendeeRepository {
 
 	
+	/**
+	 * create a new Spoolphiz\Events\Models\Eloquent\Attendee object
+	 *
+	 *
+	 * @return Spoolphiz\Events\Models\Eloquent\Attendee
+	 */
+	public function newAttendee()
+	{
+		$attendee = new Attendee;
+		return $attendee;
+	}
 	
+	/**
+	 * finds a single attendee record
+	 * 
+	 * @param $eventId		int
+	 * @param $attendeeId	int
+	 * @param $accessType	string - 'create', 'read', 'update', 'delete'
+	 *
+	 * @return Spoolphiz\Events\Models\Eloquent\Attendee
+	 */
+	public function findWithAccess($eventId, $attendeeId, $accessType = 'read')
+	{
+		$currentUser = Auth::user();
+		$attendee = Attendee::with('event')->where('id', '=', $attendeeId)->first();
 		
-	/**
-	 * get a single event by id
-	 *
-	 * @param $eventId  The id of the event
-	 *
-	 * @return array
-	 */
-	public function find($eventId) 
-	{
-
-	}
-	
-	
-	/**
-	 * get all events
-	 *
-	 *
-	 * @return array
-	 */
-	public function all()
-	{	
-	}
-	
-	
-	/**
-	 * delete a single event by id
-	 * also deletes all associated attendees
-	 *
-	 * @param $eventId  The id of the event
-	 *
-	 * @return bool
-	 */
-	public function delete($eventId)
-	{
-	}
-	
-	
-	/**
-	 * get IFS contact id by email address
-	 *
-	 * @param $email  email address of contact
-	 *
-	 * @return bool
-	 */
-	public function getIfsContact($attendeeData)
-	{
+		//dd($attendee->toArray());
 		
+		if( empty($attendee) || empty($attendee->event) )
+		{
+			App::abort(404, 'Resource not found.');
+		}
+		elseif( !$attendee->event->allowAccess($accessType, $currentUser) )
+		{
+			App::abort(401, 'You are not allowed to access this resource.');
+		}
+		
+		return $attendee;
 	}
-	
 }
