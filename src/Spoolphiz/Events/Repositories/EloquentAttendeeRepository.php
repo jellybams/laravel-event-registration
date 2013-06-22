@@ -44,6 +44,10 @@ class EloquentAttendeeRepository implements AttendeeRepository {
 		{
 			App::abort(401, 'You are not allowed to access this resource.');
 		}
+		elseif( $attendee->event->id != $eventId )
+		{
+			App::abort(404, 'The attendee you requested is not registered to the event specified.');
+		}
 		
 		return $attendee;
 	}
