@@ -11,15 +11,17 @@ class Attendee extends Eloquent {
 	 *
 	 * @var array
 	 */
-	protected $fillable = array('event_id', 'crm_contact_id', 'registration_date', 'amount_paid', 'total_amount', 'phone_number', 'seminar_only');
+	protected $fillable = array('event_id', 'crm_contact_id', 'name', 'email', 'registration_date', 'amount_paid', 'total_amount', 'phone_number', 'seminar_only');
 
 	 /**
 	 * Validator rules
 	 *
 	 * @var array
 	 */
-	protected $validators = array('event_id' => array('numberic', 'required'), 
+	protected $validators = array('event_id' => array('numeric', 'required'), 
 								'crm_contact_id' => array('numeric'), 
+								'name' => array('required', 'max:100'),
+								'email' => array('required', 'email', 'max:320'),
 								'registration_date' => array('date'), 
 								'amount_paid' => array('required', 'numeric'), 
 								'total_amount' => array('required','numeric'), 

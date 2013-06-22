@@ -2,6 +2,7 @@
 namespace Spoolphiz\Events\Models\Eloquent;
 use \Eloquent;
 use \Validator;
+use \ValidationException;
 use Spoolphiz\Events\Models\Eloquent\Country;
 use RedefineLab\Geocoder\GoogleGeocoder;
 
@@ -24,7 +25,9 @@ class Venue extends Eloquent {
 								'city' => array('required'), 
 								'state' => array('required'), 
 								'zip' => array('required'), 
-								'country_id' => array('required'), 
+								'country_id' => array('required', 'numeric', 'exists:countries,id'),
+								'lat' => array('numeric'),
+								'long' => array('numeric')
 								);
 
 	 /**
@@ -51,7 +54,7 @@ class Venue extends Eloquent {
 	 */
 	public function validate() 
 	{
-		$val = Validator::make($this->attributes, array('name' => 'required',));
+		$val = Validator::make($this->attributes, $this->validators);
 
 		if ($val->fails())
 		{
