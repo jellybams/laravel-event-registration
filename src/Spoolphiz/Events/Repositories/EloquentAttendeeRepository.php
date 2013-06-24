@@ -29,9 +29,8 @@ class EloquentAttendeeRepository implements AttendeeRepository {
 	 *
 	 * @return Spoolphiz\Events\Models\Eloquent\Attendee
 	 */
-	public function findWithAccess($eventId, $attendeeId, $accessType = 'read')
+	public function findWithAccess($eventId, $attendeeId, $currentUser, $accessType = 'read')
 	{
-		$currentUser = Auth::user();
 		$attendee = Attendee::with('event')->where('id', '=', $attendeeId)->first();
 		
 		//dd($attendee->toArray());

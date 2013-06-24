@@ -17,9 +17,10 @@ interface AttendeeRepository {
 	 * 
 	 * @param $eventId		int
 	 * @param $attendeeId	int
+	 * @param $currentUser	Spoolphiz\Events\Models\Eloquent\User
 	 * @param $accessType	string - 'create', 'read', 'update', 'delete'
 	 *
 	 * @return Spoolphiz\Events\Models\Eloquent\Attendee
 	 */
-	public function findWithAccess($eventId, $attendeeId, $accessType);
+	public function findWithAccess($eventId, $attendeeId, $currentUser, $accessType);
 }
