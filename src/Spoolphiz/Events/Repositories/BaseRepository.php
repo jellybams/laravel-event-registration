@@ -21,6 +21,10 @@ abstract class BaseRepository
 	{
 		foreach( $filters as &$item )
 		{
+			if (get_magic_quotes_gpc()) {
+				$item = stripslashes($item);
+			}
+			
 			$item = json_decode($item, true);
 		}
 		
