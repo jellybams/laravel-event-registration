@@ -2,11 +2,14 @@
 namespace Spoolphiz\Events\Repositories;
 use \App;
 use \Auth;
+use \DB;
 use Spoolphiz\Events\Interfaces\EventRepository;
 use Spoolphiz\Events\Models\Eloquent\Event;
 
-class EloquentEventRepository implements EventRepository {
-		
+class EloquentEventRepository extends BaseRepository implements EventRepository {
+	
+	protected $repoModel = 'Spoolphiz\Events\Models\Eloquent\Event';
+	
 	/**
 	 * get a single event by id, first checks to make sure the current auth'd user has permission to view
 	 *
@@ -63,6 +66,7 @@ class EloquentEventRepository implements EventRepository {
 	 * get all events or all of an instructor's events
 	 *
 	 * @param user  User
+	 * @param filters  array - conditions for event retrieval 
 	 *
 	 * @return array
 	 */
@@ -77,6 +81,53 @@ class EloquentEventRepository implements EventRepository {
 			//get only this instructor's events
 			$events = $user->events;
 		}
+		
+		return $events;
+	}
+	
+	
+	/**
+	 * get the total events for a given user (or all events for admins/sales reps)
+	 *
+	 * @param user  User
+	 *
+	 * @return array
+	 */
+	public function total( $user )
+	{	
+		if( $user->isAdmin() || $user->isSalesRep() )
+		{
+			$count = Event::count();
+		}
+		else
+		{
+			//get only this instructor's events
+			$count = $user->events()->count();
+		}
+		
+		return array('total'=>$count);
+	}
+	
+	
+	/**
+	 * get events based on filters
+	 *
+	 * @param user  User
+	 * @param filters  array - conditions for event retrieval 
+	 *
+	 * @return array
+	 */
+	public function filtered( $user, $filters = array() )
+	{	
+		//filters come in an array containing json strings, parse to all array
+		$filters = $this->parseFilters($filters);
+		
+		//if the current user isn't admin this will be used as the relation function
+		//to call on the Spoolphiz\Events\Models\Eloquent\User that is currently auth'd
+		$aclUserRelationName = 'events';
+		
+		//build a collection of records based on the specified filters
+		$events = $this->buildFilteredCollection($this->repoModel, $filters, $user, $aclUserRelationName);
 		
 		return $events;
 	}

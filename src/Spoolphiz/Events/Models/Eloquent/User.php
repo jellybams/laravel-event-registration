@@ -7,7 +7,9 @@ use Illuminate\Auth\Reminders\RemindableInterface;
 
 class User extends Eloquent implements UserInterface, RemindableInterface {
 
-	protected $userRoleIds = array('INSTRUCTOR'=>3);
+	protected $userRoleIds = array('ADMIN'=>1,
+									'SALESREP'=>2,
+									'INSTRUCTOR'=>3);
 
 	/**
 	 * The database table used by the model.
@@ -70,7 +72,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	 */
 	public function isAdmin()
 	{
-		if( $this->role_id == 1 ){
+		if( $this->role_id == $this->userRoleIds['ADMIN'] ){
 			return true;
 		}
 		else{
@@ -85,7 +87,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	 */
 	public function isSalesRep()
 	{
-		if( $this->role_id == 2 ){
+		if( $this->role_id == $this->userRoleIds['SALESREP'] ){
 			return true;
 		}
 		else{
