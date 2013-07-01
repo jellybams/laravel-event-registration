@@ -7,7 +7,9 @@ abstract class BaseRepository
 		
 	public function allowedConditions()
 	{
-		return array('=', '!=', '<', '<=', '>', '>=', 'starts with', 'ends with', 'contains', 'not contains');
+		return array( 'simple' => array('=', '!=', '<', '<=', '>', '>='), 
+						'translate' => array('starts with', 'ends with', 'contains', 'not contains')
+					);
 	}
 	
 	
@@ -21,7 +23,8 @@ abstract class BaseRepository
 	{
 		foreach( $filters as &$item )
 		{
-			if (get_magic_quotes_gpc()) {
+			if (get_magic_quotes_gpc()) 
+			{
 				$item = stripslashes($item);
 			}
 			
@@ -32,18 +35,51 @@ abstract class BaseRepository
 	}
 	
 	
+	public function translateCondition($filterField)
+	{
+		switch( $filterField['operator'] )
+		{
+			case 'starts with':
+				$filterField['operator'] = 'LIKE';
+				$filterField['value'] = $filterField['value'].'%';
+				break;
+			case 'ends with':
+				$filterField['operator'] = 'LIKE';
+				$filterField['value'] = $filterField['value'].'%';
+				break;
+			case 'contains':
+				$filterField['operator'] = 'LIKE';
+				$filterField['value'] = '%'.$filterField['value'].'%';
+				break;
+			case 'not contains':
+				$filterField['operator'] = 'NOT LIKE';
+				$filterField['value'] = '%'.$filterField['value'].'%';
+				break;
+		}
+		
+		return $filterField;
+	}
+	
 	
 	public function buildFilteredCollection($model, $filters, $currentUser, $aclUserRelationName, $object = null)
 	{
 		$filterFields = (isset($filters['filter']['fields'])) ? $filters['filter']['fields'] : array();
+		$allowedConditions = $this->allowedConditions();
 		$limit = (isset($filters['limit']) && is_numeric($filters['limit'])) ? $filters['limit'] : 0;
 		$page = (isset($filters['page']) && is_numeric($filters['page'])) ? $filters['page'] : 0;
+		$where = '';
 
 		$lastFilterFieldPos =  (count($filterFields)>0) ? count($filterFields)-1 : 0;
 		
 		// if filter fields exist...
 		if( isset($filterFields[$lastFilterFieldPos]) )
 		{
+			//if the operator for the where clause is not a simple operator, transate the operator and value fields
+			if( in_array($filterFields[$lastFilterFieldPos]['operator'], $allowedConditions['translate'] ) )
+			{
+				$filterFields[$lastFilterFieldPos] = $this->translateCondition($filterFields[$lastFilterFieldPos]);
+			}
+			
 			//if the Collection object has not yet been instantiated...
 			if( !is_object($object) )
 			{
@@ -72,7 +108,7 @@ abstract class BaseRepository
 				else
 				{	
 					if( $currentUser->isAdmin() || $currentUser->isSalesRep() )
-					{
+					{	
 						$object = $model::where($filterFields[$lastFilterFieldPos]['field_name'], 
 												$filterFields[$lastFilterFieldPos]['operator'], 
 												$filterFields[$lastFilterFieldPos]['value']);
