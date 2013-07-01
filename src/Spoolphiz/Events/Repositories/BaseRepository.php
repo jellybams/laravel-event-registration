@@ -61,13 +61,12 @@ abstract class BaseRepository
 	}
 	
 	
-	public function buildFilteredCollection($model, $filters, $currentUser, $aclUserRelationName, $object = null)
+	public function buildFilteredCollection($filters, $collection)
 	{
 		$filterFields = (isset($filters['filter']['fields'])) ? $filters['filter']['fields'] : array();
 		$allowedConditions = $this->allowedConditions();
 		$limit = (isset($filters['limit']) && is_numeric($filters['limit'])) ? $filters['limit'] : 0;
 		$page = (isset($filters['page']) && is_numeric($filters['page'])) ? $filters['page'] : 0;
-		$where = '';
 
 		$lastFilterFieldPos =  (count($filterFields)>0) ? count($filterFields)-1 : 0;
 		
@@ -80,254 +79,45 @@ abstract class BaseRepository
 				$filterFields[$lastFilterFieldPos] = $this->translateCondition($filterFields[$lastFilterFieldPos]);
 			}
 			
-			//if the Collection object has not yet been instantiated...
-			if( !is_object($object) )
-			{
-				//set up pagination of records
-				if( $limit !== 0 )
-				{
-					if( $currentUser->isAdmin() || $currentUser->isSalesRep() )
-					{
-						$object = $model::take($limit);
-					}
-					else
-					{
-						$object = $currentUser->{$aclUserRelationName}()->take($limit);
-					}
-					
-					
-					if( $page !== 0 )
-					{
-						$object = $object->skip($limit*($page-1));
-					}
-					
-					$object = $object->where($filterFields[$lastFilterFieldPos]['field_name'], 
-											$filterFields[$lastFilterFieldPos]['operator'], 
-											$filterFields[$lastFilterFieldPos]['value']);
-				}
-				else
-				{	
-					if( $currentUser->isAdmin() || $currentUser->isSalesRep() )
-					{	
-						$object = $model::where($filterFields[$lastFilterFieldPos]['field_name'], 
-												$filterFields[$lastFilterFieldPos]['operator'], 
-												$filterFields[$lastFilterFieldPos]['value']);
-					}
-					else
-					{
-						$object = $currentUser->{$aclUserRelationName}()->where($filterFields[$lastFilterFieldPos]['field_name'], 
-												$filterFields[$lastFilterFieldPos]['operator'], 
-												$filterFields[$lastFilterFieldPos]['value']);
-					}
-					
-					
-				}
-				
-				unset($filterFields[$lastFilterFieldPos]);
-				$filters['filter']['fields'] = $filterFields;
-				
-				return $this->buildFilteredCollection($model, $filters, $currentUser, $aclUserRelationName, $object);
-			}
-			//the collection object is already instatiatied, this is a recursive call
-			else
+			//decide if this condition should be added with AND or OR
+			$filterMethod = 'where';
+			
+			if( isset($filters['filter']['type']) && strtoupper($filters['filter']['type'] == 'OR' ) )
 			{	
-				$filterMethod = 'where';
-				
-				if( isset($filters['filter']['type']) && strtoupper($filters['filter']['type'] == 'OR' ) )
-				{	
-					$filterMethod = 'orWhere';
-				}
-				
-				$object->{$filterMethod}($filterFields[$lastFilterFieldPos]['field_name'], 
-										$filterFields[$lastFilterFieldPos]['operator'], 
-										$filterFields[$lastFilterFieldPos]['value']);
-				
-				unset($filterFields[$lastFilterFieldPos]);
-				$filters['filter']['fields'] = $filterFields;
-
-				return $this->buildFilteredCollection($model, $filters, $currentUser, $aclUserRelationName, $object);
+				$filterMethod = 'orWhere';
 			}
+			
+			$collection = $collection->{$filterMethod}($filterFields[$lastFilterFieldPos]['field_name'], 
+														$filterFields[$lastFilterFieldPos]['operator'], 
+														$filterFields[$lastFilterFieldPos]['value']);
+			
+			unset($filterFields[$lastFilterFieldPos]);
+			$filters['filter']['fields'] = $filterFields;
+
+			return $this->buildFilteredCollection($filters, $collection);
 		}
 		//if filter fields don't exist, check if pagination filters exist
 		else
 		{
-			//if we don't have a collection object, filter fields never existed 
-			//so no collection object was created yet... 
-			//lets check if pagination needs to be set
-			if( !is_object($object) )
+			//at this point all filter fields were recursively applied to $collection
+			//or there weren't any filter field to begin with... either way lets
+			//set up pagination of records
+			if( $limit !== 0 )
 			{
-				if( $limit !== 0 )
+				$collection = $collection->take($limit);
+				
+				if( $page !== 0 )
 				{
-					if( $currentUser->isAdmin() || $currentUser->isSalesRep() )
-					{
-						$object = $model::take($limit);
-					}
-					else
-					{
-						$object = $currentUser->{$aclUserRelationName}()->take($limit);
-					}
-					
-					if( $page !== 0 )
-					{
-						$object = $object->skip($limit*($page-1));
-					}
-				}
-				else
-				{
-					//no pagination filters were passed, looks like we just want all records
-					if( $currentUser->isAdmin() || $currentUser->isSalesRep() )
-					{
-						$instance = new $model;
-						$object = $instance->newQuery();
-					}
-					else
-					{
-						$object = $currentUser->{$aclUserRelationName}();
-					}
-					
+					$collection = $collection->skip($limit*($page-1));
 				}
 			}
-			
 		}
 		
 		//set up return fields
 		$returnFields = $this->returnFields($filters);
 		
-		return $object->get($returnFields);
+		return $collection->get($returnFields);
+		
 	}
-	
-	
-	
-	
-	
-	
-	/*
-	public function buildFilteredCollection($model, $filters, $currentUser, $aclUserRelationName, $object = null)
-	{
-		$filterFields = (isset($filters['filter']['fields'])) ? $filters['filter']['fields'] : array();
-		$limit = (isset($filters['limit']) && is_numeric($filters['limit'])) ? $filters['limit'] : 0;
-		$page = (isset($filters['page']) && is_numeric($filters['page'])) ? $filters['page'] : 0;
-
-		$lastFilterFieldPos =  (count($filterFields)>0) ? count($filterFields)-1 : 0;
-		
-		// if filter fields exist...
-		if( isset($filterFields[$lastFilterFieldPos]) )
-		{
-			//if the Collection object has not yet been instantiated...
-			if( !is_object($object) )
-			{
-				//set up pagination of records
-				if( $limit !== 0 )
-				{
-					if( $currentUser->isAdmin() || $currentUser->isSalesRep() )
-					{
-						$object = $model::take($limit);
-					}
-					else
-					{
-						$object = $currentUser->{$aclUserRelationName}()->take($limit);
-					}
-					
-					
-					if( $page !== 0 )
-					{
-						$object = $object->skip($limit*($page-1));
-					}
-					
-					$object = $object->where($filterFields[$lastFilterFieldPos]['field_name'], 
-											$filterFields[$lastFilterFieldPos]['operator'], 
-											$filterFields[$lastFilterFieldPos]['value']);
-				}
-				else
-				{	
-					if( $currentUser->isAdmin() || $currentUser->isSalesRep() )
-					{
-						$object = $model::where($filterFields[$lastFilterFieldPos]['field_name'], 
-												$filterFields[$lastFilterFieldPos]['operator'], 
-												$filterFields[$lastFilterFieldPos]['value']);
-					}
-					else
-					{
-						$object = $currentUser->{$aclUserRelationName}()->where($filterFields[$lastFilterFieldPos]['field_name'], 
-												$filterFields[$lastFilterFieldPos]['operator'], 
-												$filterFields[$lastFilterFieldPos]['value']);
-					}
-					
-					
-				}
-				
-				unset($filterFields[$lastFilterFieldPos]);
-				$filters['filter']['fields'] = $filterFields;
-				
-				return $this->buildFilteredCollection($model, $filters, $currentUser, $aclUserRelationName, $object);
-			}
-			//the collection object is already instatiatied, this is a recursive call
-			else
-			{	
-				$filterMethod = 'where';
-				
-				if( isset($filters['filter']['type']) && strtoupper($filters['filter']['type'] == 'OR' ) )
-				{	
-					$filterMethod = 'orWhere';
-				}
-				
-				$object->{$filterMethod}($filterFields[$lastFilterFieldPos]['field_name'], 
-										$filterFields[$lastFilterFieldPos]['operator'], 
-										$filterFields[$lastFilterFieldPos]['value']);
-				
-				unset($filterFields[$lastFilterFieldPos]);
-				$filters['filter']['fields'] = $filterFields;
-
-				return $this->buildFilteredCollection($model, $filters, $currentUser, $aclUserRelationName, $object);
-			}
-		}
-		//if filter fields don't exist, check if pagination filters exist
-		else
-		{
-			//if we don't have a collection object, filter fields never existed 
-			//so no collection object was created yet... 
-			//lets check if pagination needs to be set
-			if( !is_object($object) )
-			{
-				if( $limit !== 0 )
-				{
-					if( $currentUser->isAdmin() || $currentUser->isSalesRep() )
-					{
-						$object = $model::take($limit);
-					}
-					else
-					{
-						$object = $currentUser->{$aclUserRelationName}()->take($limit);
-					}
-					
-					if( $page !== 0 )
-					{
-						$object = $object->skip($limit*($page-1));
-					}
-				}
-				else
-				{
-					//no pagination filters were passed, looks like we just want all records
-					if( $currentUser->isAdmin() || $currentUser->isSalesRep() )
-					{
-						$instance = new $model;
-						$object = $instance->newQuery();
-					}
-					else
-					{
-						$object = $currentUser->{$aclUserRelationName}();
-					}
-					
-				}
-			}
-			
-		}
-		
-		//set up return fields
-		$returnFields = $this->returnFields($filters);
-		
-		return $object->get($returnFields);
-	}
-	*/
 	
 }

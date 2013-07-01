@@ -121,15 +121,21 @@ class EloquentEventRepository extends BaseRepository implements EventRepository 
 	{	
 		//filters come in an array containing json strings, parse to all array
 		$filters = $this->parseFilters($filters);
+				
+		//instantiate a collection object based on the current user's role
+		if( $user->isAdmin() || $user->isSalesRep() )
+		{
+			$instance = new $this->repoModel;
+			$collection = $instance->newQuery();
+		}
+		else
+		{
+			$collection = $user->events();
+		}
 		
-		//if the current user isn't admin this will be used as the relation function
-		//to call on the Spoolphiz\Events\Models\Eloquent\User that is currently auth'd
-		$aclUserRelationName = 'events';
+		$collection = $this->buildFilteredCollection($filters, $collection);
 		
-		//build a collection of records based on the specified filters
-		$events = $this->buildFilteredCollection($this->repoModel, $filters, $user, $aclUserRelationName);
-		
-		return $events;
+		return $collection;
 	}
 	
 	
