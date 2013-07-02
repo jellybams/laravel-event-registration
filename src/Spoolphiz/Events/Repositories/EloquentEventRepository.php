@@ -130,7 +130,7 @@ class EloquentEventRepository extends BaseRepository implements EventRepository 
 		}
 		else
 		{
-			$collection = $user->events()->with('instructors');
+			$collection = $user->events();
 		}
 		
 		$collection = $this->buildFilteredCollection($filters, $collection);
