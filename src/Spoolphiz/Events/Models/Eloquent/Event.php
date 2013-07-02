@@ -58,8 +58,7 @@ class Event extends Eloquent {
 
 	public function instructors()
     {
-        return $this->belongsToMany('Spoolphiz\Events\Models\Eloquent\User', 'event_instructor', 'event_id', 'user_id')
-					->where('role_id', '=', $this->userRoleIds['INSTRUCTOR']);
+        return $this->belongsToMany('Spoolphiz\Events\Models\Eloquent\User', 'event_instructor', 'event_id', 'user_id');
     }
 
 	public function venue()

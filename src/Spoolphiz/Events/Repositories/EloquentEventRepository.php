@@ -74,7 +74,7 @@ class EloquentEventRepository extends BaseRepository implements EventRepository 
 	{	
 		if( $user->isAdmin() || $user->isSalesRep() )
 		{
-			$events = Event::all();
+			$events = Event::with('instructors')->get();
 		}
 		else
 		{
