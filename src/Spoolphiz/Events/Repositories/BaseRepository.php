@@ -1,5 +1,6 @@
 <?php
 namespace Spoolphiz\Events\Repositories;
+use \App;
 use Spoolphiz\Events\Interfaces\EventRepository;
 
 abstract class BaseRepository
@@ -7,7 +8,7 @@ abstract class BaseRepository
 		
 	public function allowedConditions()
 	{
-		return array( 'simple' => array('=', '!=', '<', '<=', '>', '>='), 
+		return array( 'simple' => array('=', '!=', '<', '<=', '>', '>=', 'in', 'not in'), 
 						'translate' => array('starts with', 'ends with', 'contains', 'not contains')
 					);
 	}
@@ -37,7 +38,7 @@ abstract class BaseRepository
 	
 	public function translateCondition($filterField)
 	{
-		switch( $filterField['operator'] )
+		switch( strtolower($filterField['operator']) )
 		{
 			case 'starts with':
 				$filterField['operator'] = 'LIKE';
@@ -55,6 +56,10 @@ abstract class BaseRepository
 				$filterField['operator'] = 'NOT LIKE';
 				$filterField['value'] = '%'.$filterField['value'].'%';
 				break;
+			/*case 'in':
+				$filterField['operator'] = 'IN';
+				$filterField['value'] = '('.implode(',', $filterField['value']).')';
+				break;*/
 		}
 		
 		return $filterField;
@@ -79,17 +84,39 @@ abstract class BaseRepository
 				$filterFields[$lastFilterFieldPos] = $this->translateCondition($filterFields[$lastFilterFieldPos]);
 			}
 			
-			//decide if this condition should be added with AND or OR
-			$filterMethod = 'where';
+			$operator = strtoupper($filterFields[$lastFilterFieldPos]['operator']);
 			
-			if( isset($filters['filter']['type']) && strtoupper($filters['filter']['type'] == 'OR' ) )
-			{	
-				$filterMethod = 'orWhere';
+			//decide if this condition should be added with AND or OR or IN
+			if( $operator == 'IN' || $operator == 'NOT IN' )
+			{
+				if( !is_array($filterFields[$lastFilterFieldPos]['value']) )
+				{
+					App::abort(400, 'The '.$operator.' operator should be accompanied by an array of ids as the value.');
+				}
+				
+				$filterMethod = 'whereIn';
+				
+				if( $operator == 'NOT IN' )
+				{	
+					$filterMethod = 'whereNotIn';
+				}
+				
+				$collection = $collection->{$filterMethod}($filterFields[$lastFilterFieldPos]['field_name'],
+															$filterFields[$lastFilterFieldPos]['value']);
 			}
-			
-			$collection = $collection->{$filterMethod}($filterFields[$lastFilterFieldPos]['field_name'], 
-														$filterFields[$lastFilterFieldPos]['operator'], 
-														$filterFields[$lastFilterFieldPos]['value']);
+			else
+			{
+				$filterMethod = 'where';
+
+				if( isset($filters['filter']['type']) && strtoupper($filters['filter']['type'] == 'OR' ) )
+				{	
+					$filterMethod = 'orWhere';
+				}
+
+				$collection = $collection->{$filterMethod}($filterFields[$lastFilterFieldPos]['field_name'], 
+															$filterFields[$lastFilterFieldPos]['operator'], 
+															$filterFields[$lastFilterFieldPos]['value']);
+			}
 			
 			unset($filterFields[$lastFilterFieldPos]);
 			$filters['filter']['fields'] = $filterFields;
