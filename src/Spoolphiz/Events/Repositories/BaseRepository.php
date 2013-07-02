@@ -86,7 +86,7 @@ abstract class BaseRepository
 			
 			$operator = strtoupper($filterFields[$lastFilterFieldPos]['operator']);
 			
-			//decide if this condition should be added with AND or OR or IN
+			//decide what type of WHERE to use with this field
 			if( $operator == 'IN' || $operator == 'NOT IN' )
 			{
 				if( !is_array($filterFields[$lastFilterFieldPos]['value']) )

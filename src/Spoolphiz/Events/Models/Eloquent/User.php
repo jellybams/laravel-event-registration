@@ -31,7 +31,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	 */
 	public function events()
 	{
-		return $this->belongsToMany('Spoolphiz\Events\Models\Eloquent\Event', 'event_instructor');
+		return $this->belongsToMany('Spoolphiz\Events\Models\Eloquent\Event', 'event_instructor')->with('instructors');
 	}
 
 	/**
