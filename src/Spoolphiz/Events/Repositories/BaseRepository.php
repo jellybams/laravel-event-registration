@@ -6,6 +6,11 @@ use Spoolphiz\Events\Interfaces\EventRepository;
 abstract class BaseRepository
 {
 		
+	/**
+	 * allowed operators for filtering data
+	 *
+	 * @return array
+	 */
 	public function allowedConditions()
 	{
 		return array( 'simple' => array('=', '!=', '<', '<=', '>', '>=', 'in', 'not in'), 
@@ -14,12 +19,27 @@ abstract class BaseRepository
 	}
 	
 	
+	/**
+	 * extracts fields to return from a given model
+	 *
+	 * @param array		filters
+	 *
+	 * @return array
+	 */
 	public function returnFields($filters)
 	{
 		return (isset($filters['fields'])) ? $filters['fields'] : array('*') ;
 	}
 	
 	
+	/**
+	 * laravel's Input::get returns key value pairs for filter params but the value
+	 * is not json decoded automatically, this function performs that process
+	 *
+	 * @param array 	filters obtained from Input::get()
+	 *
+	 * @return array 	
+	 */
 	public function parseFilters($filters)
 	{
 		foreach( $filters as &$item )
@@ -36,6 +56,14 @@ abstract class BaseRepository
 	}
 	
 	
+	/**
+	 * translates non-basic filtering conditions into strings that can be passed
+	 * the the query builder using where() or orWhere()
+	 *
+	 * @param array 	filter field data (contains keys of name, operator, value)
+	 *
+	 * @return array
+	 */
 	public function translateCondition($filterField)
 	{
 		switch( strtolower($filterField['operator']) )
@@ -66,6 +94,14 @@ abstract class BaseRepository
 	}
 	
 	
+	/**
+	 * applies all filters to a collection object and queries the data
+	 *
+	 * @param filters 		array - conditions to apply to query
+	 * @param collection	Illuminate\Database\Eloquent\Builder instance
+	 *
+	 * @return Illuminate\Database\Eloquent\Collection instance
+	 */
 	public function buildFilteredCollection($filters, $collection)
 	{
 		$filterFields = (isset($filters['filter']['fields'])) ? $filters['filter']['fields'] : array();
@@ -132,11 +168,11 @@ abstract class BaseRepository
 			if( $limit !== 0 )
 			{
 				$collection = $collection->take($limit);
-				
-				if( $page !== 0 )
+				$collection = $collection->skip($limit*$page);
+				/*if( $page !== 0 )
 				{
 					$collection = $collection->skip($limit*($page-1));
-				}
+				}*/
 			}
 		}
 		

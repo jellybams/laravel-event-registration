@@ -112,8 +112,8 @@ class EloquentEventRepository extends BaseRepository implements EventRepository 
 	/**
 	 * get events based on filters
 	 *
-	 * @param user  User
-	 * @param filters  array - conditions for event retrieval 
+	 * @param user		Spoolphiz\Events\Models\Eloquent\User intance
+	 * @param filters	array - conditions for event retrieval 
 	 *
 	 * @return array
 	 */
