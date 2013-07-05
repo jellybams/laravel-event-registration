@@ -166,7 +166,7 @@ abstract class BaseRepository
 			//do we want just the total number of records with the critara so far?
 			if( isset($filters['total']) && $filters['total'] == 1 )
 			{
-				return array( "total:" => $collection->count() );
+				return array( "total" => $collection->count() );
 			}
 			else
 			{
