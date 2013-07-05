@@ -101,7 +101,7 @@ abstract class BaseRepository
 					$filterMethod = 'whereNotIn';
 				}
 				
-				$collection = $collection->{$filterMethod}($filterFields[$lastFilterFieldPos]['field_name'],
+				$collection = $collection->{$filterMethod}($filterFields[$lastFilterFieldPos]['name'],
 															$filterFields[$lastFilterFieldPos]['value']);
 			}
 			else
@@ -113,7 +113,7 @@ abstract class BaseRepository
 					$filterMethod = 'orWhere';
 				}
 
-				$collection = $collection->{$filterMethod}($filterFields[$lastFilterFieldPos]['field_name'], 
+				$collection = $collection->{$filterMethod}($filterFields[$lastFilterFieldPos]['name'], 
 															$filterFields[$lastFilterFieldPos]['operator'], 
 															$filterFields[$lastFilterFieldPos]['value']);
 			}
