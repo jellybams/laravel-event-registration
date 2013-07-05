@@ -25,15 +25,6 @@ interface EventRepository {
 	public function all($user);
 	
 	
-	/**
-	 * Return an array with key 'count' representing total events [for a given user]
-	 *
-	 * @param $user  		Spoolphiz\Events\Models\Eloquent\User object
-	 *
-	 * @return array
-	 */
-	public function total($user);
-	
 	
 	/**
 	 * Gets events based on supplied filters

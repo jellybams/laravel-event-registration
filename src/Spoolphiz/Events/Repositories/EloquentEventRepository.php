@@ -87,29 +87,6 @@ class EloquentEventRepository extends BaseRepository implements EventRepository 
 	
 	
 	/**
-	 * get the total events for a given user (or all events for admins/sales reps)
-	 *
-	 * @param user  User
-	 *
-	 * @return array
-	 */
-	public function total( $user )
-	{	
-		if( $user->isAdmin() || $user->isSalesRep() )
-		{
-			$count = Event::count();
-		}
-		else
-		{
-			//get only this instructor's events
-			$count = $user->events()->count();
-		}
-		
-		return array('total'=>$count);
-	}
-	
-	
-	/**
 	 * get events based on filters
 	 *
 	 * @param user		Spoolphiz\Events\Models\Eloquent\User intance

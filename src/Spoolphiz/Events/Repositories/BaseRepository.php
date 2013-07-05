@@ -103,7 +103,7 @@ abstract class BaseRepository
 	 * @return Illuminate\Database\Eloquent\Collection instance
 	 */
 	public function buildFilteredCollection($filters, $collection)
-	{
+	{	
 		$filterFields = (isset($filters['filter']['fields'])) ? $filters['filter']['fields'] : array();
 		$allowedConditions = $this->allowedConditions();
 		$limit = (isset($filters['limit']) && is_numeric($filters['limit'])) ? $filters['limit'] : 0;
@@ -162,25 +162,30 @@ abstract class BaseRepository
 		//if filter fields don't exist, check if pagination filters exist
 		else
 		{
-			//at this point all filter fields were recursively applied to $collection
-			//or there weren't any filter field to begin with... either way lets
-			//set up pagination of records
-			if( $limit !== 0 )
+			
+			//do we want just the total number of records with the critara so far?
+			if( isset($filters['total']) && $filters['total'] == 1 )
 			{
-				$collection = $collection->take($limit);
-				$collection = $collection->skip($limit*$page);
-				/*if( $page !== 0 )
-				{
-					$collection = $collection->skip($limit*($page-1));
-				}*/
+				return $collection->count();
 			}
+			else
+			{
+				//at this point all filter fields were recursively applied to $collection
+				//or there weren't any filter field to begin with... either way lets
+				//set up pagination of records
+				if( $limit !== 0 )
+				{
+					$collection = $collection->take($limit);
+					$collection = $collection->skip($limit*$page);
+				}
+			}
+			
 		}
 		
 		//set up return fields
 		$returnFields = $this->returnFields($filters);
-		
+
 		return $collection->get($returnFields);
-		
 	}
 	
 }
