@@ -42,15 +42,15 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	 *
 	 * @var array
 	 */
-	protected $validators = array('username' => array('required', 'max:32', 'unique:users'), 
-								'password' => array('required', 'confirmed'),
-								'email' => array('required', 'email', 'unique:users'), 
+	protected $validators = array('username' => array('required', 'max:32', 'unique:users,username'), 
+								'password' => array('required'),
+								'email' => array('required', 'email', 'unique:users,email'), 
 								'name' => array('required', 'max:100'), 
 								'role_id' => array('required', 'numeric'), 
 								'active' => array('required', 'numeric'), 
 								'api_key' => array('required', 'unique:users,api_key')
 								);
-								
+	
 
 	 /**
 	 * Relationships
@@ -68,6 +68,38 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	 */
 	public function validate() 
 	{
+		$dirty = $this->getDirty();
+		
+		//exclude the current user id from 'unqiue' validators
+		if( $this->id > 0 )
+		{
+			$usernameUnique = 'unique:users,username,'.$this->id;
+			$emailUnique = 'unique:users,email,'.$this->id;
+			$apiUnique = 'unique:users,api_key,'.$this->id;
+			
+			//if the password is being changed, check for the password_confirmation field as well
+			if( isset($dirty['password']) || isset($dirty['password_confirmation']) )
+			{
+				$this->validators['password'][] = 'confirmed';
+			}
+		}
+		else
+		{
+			//this is a new user, no need to exclude any user ids from the validators
+			$usernameUnique = 'unique:users,username';
+			$emailUnique = 'unique:users,email';
+			$apiUnique = 'unique:users,api_key';
+			
+			//since this is a new user, make sure the password is confirmed
+			$this->validators['password'][] = 'confirmed';
+		}
+		
+		
+		
+		$this->validators['username'] = array('required', 'max:32', $usernameUnique);
+		$this->validators['email'] = array('required', 'max:32', $emailUnique);
+		$this->validators['api_key'] = array('required', 'max:32', $apiUnique);
+		
 		$val = Validator::make($this->attributes, $this->validators);
 
 		if ($val->fails())
@@ -90,7 +122,10 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 			unset($this->password_confirmation);
 		}
 		
-		$this->password = Hash::make($this->password);
+		if( isset($this->password) )
+		{
+			$this->password = Hash::make($this->password);
+		}
 		
 		return parent::save();
 	}
