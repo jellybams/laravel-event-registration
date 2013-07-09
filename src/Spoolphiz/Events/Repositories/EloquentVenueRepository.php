@@ -14,11 +14,10 @@ class EloquentVenueRepository implements VenueRepository {
 	 * @return array
 	 */
 	public function find($venueId) 
-	{
-		$data = '';
-		
+	{	
 		//$venue = Venue::findOrFail($venueId);
-		$venue = Venue::find($venueId);
+		//$venue = Venue::find($venueId);
+		$venue = Venue::with('country')->where('id', '=', $venueId)->first();
 		
 		if( empty($venue) )
 		{
@@ -38,7 +37,6 @@ class EloquentVenueRepository implements VenueRepository {
 	 */
 	public function all()
 	{	
-		//$venues = Venue::where('id', '>', '0')->take(100)->get();
 		$venues = Venue::all();
 		
 		return $venues;
