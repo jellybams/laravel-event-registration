@@ -35,7 +35,7 @@ class Event extends Eloquent {
 								'seminar_price' => array('numeric'),
 								'full_price' => array('numeric'), 
 								'capacity' => array('numeric'),
-								'status' => array('required', 'numeric', 'max:3'),
+								'status' => array('required', 'numeric'),
 								'create_seminaronly' => array('in:0,1'),
 								'create_fullevent' => array('in:0,1')
 								);
