@@ -1,5 +1,6 @@
 <?php
 namespace Spoolphiz\Events\Models\Eloquent;
+use \App;
 use \DB;
 use \Eloquent;
 use \Validator;
@@ -80,9 +81,9 @@ class Venue extends Eloquent {
 	public function delete() 
 	{
 		//don't allow deletion of the 'no venue' venue
-		if( !$this->allowModify() )
+		if( !$this->moddable() )
 		{
-			App::abort('This venue cannot be modified/deleted.', 403);
+			App::abort(403, 'This venue cannot be modified/deleted');
 		}
 		
 		//get a list of events associated to this venue
@@ -142,7 +143,7 @@ class Venue extends Eloquent {
 	 *
 	 * @return bool
 	 */
-	public function allowModify()
+	public function moddable()
 	{	
 		if( $this->id == 1 )
 		{

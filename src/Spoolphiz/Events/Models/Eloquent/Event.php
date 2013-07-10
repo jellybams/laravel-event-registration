@@ -9,7 +9,7 @@ class Event extends Eloquent {
 	
 	protected $userRoleIds = array('INSTRUCTOR'=>3);
 	
-	protected $defaultAttribs = array('event_type_id' => 1, 
+	protected $defaultAttribs = array('category_id' => 1, 
 									'status' => 0, 
 									'create_seminaronly' => 0, 
 									'create_fullevent' => 1);
@@ -19,14 +19,14 @@ class Event extends Eloquent {
 	 *
 	 * @var array
 	 */
-	protected $fillable = array('event_type_id', 'venue_id', 'start_date', 'end_date', 'title', 'contact_phone', 'seminar_price', 'full_price', 'capacity', 'status', 'create_seminaronly', 'create_fullevent');
+	protected $fillable = array('category_id', 'venue_id', 'start_date', 'end_date', 'title', 'contact_phone', 'seminar_price', 'full_price', 'capacity', 'status', 'create_seminaronly', 'create_fullevent');
 
 	 /**
 	 * Validator rules
 	 *
 	 * @var array
 	 */
-	protected $validators = array('event_type_id' => array('required', 'numeric'),
+	protected $validators = array('category_id' => array('required', 'numeric'),
 								'venue_id' => array('numeric'), 
 								'start_date' => array('date'), 
 								'end_date' => array('date'), 
