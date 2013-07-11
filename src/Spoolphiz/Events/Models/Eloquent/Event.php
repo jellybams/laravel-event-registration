@@ -93,7 +93,7 @@ class Event extends Eloquent {
 	{
 		foreach( $this->defaultAttribs as $key => $value )
 		{
-			if( empty($this->$key) )
+			if( empty($this->$key) && $this->$key !== 0 )
 			{
 				$this->$key = $value;
 			}
