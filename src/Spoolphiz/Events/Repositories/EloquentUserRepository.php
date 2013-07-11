@@ -52,4 +52,13 @@ class EloquentUserRepository extends BaseRepository implements UserRepository {
 		return $user;
 	}
 	
+	
+	
+	public function makeApiKey()
+	{
+		$key = User::makeApiKey();
+		
+		return $key;
+	}
+	
 }

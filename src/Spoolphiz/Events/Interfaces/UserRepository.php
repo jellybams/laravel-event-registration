@@ -9,4 +9,6 @@ interface UserRepository {
 	
 	public function newUser();
 	
+	public function makeApiKey();
+	
 }

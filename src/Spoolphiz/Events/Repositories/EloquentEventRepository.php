@@ -23,8 +23,8 @@ class EloquentEventRepository extends BaseRepository implements EventRepository 
 	{
 		$data = '';
 		
-		//$event = Event::find($eventId);
-		$events = Event::with('instructors', 'attendees', 'venue')->where('id', '=', $eventId)->get();
+		//get events
+		$events = Event::with('attendees', 'venue')->where('id', '=', $eventId)->get();
 		
 		if( $events->isEmpty() )
 		{
