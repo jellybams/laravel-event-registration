@@ -32,6 +32,7 @@ class EloquentEventRepository extends BaseRepository implements EventRepository 
 		}
 		else
 		{
+			$events = $this->addInsturctorIdsArray($events);
 			$event = $events->first();
 			
 			if( !$event->allowAccess($accessType, $user) )
@@ -82,6 +83,8 @@ class EloquentEventRepository extends BaseRepository implements EventRepository 
 			$events = $user->events;
 		}
 		
+		$events = $this->addInsturctorIdsArray($events);
+		
 		return $events;
 	}
 	
@@ -111,6 +114,27 @@ class EloquentEventRepository extends BaseRepository implements EventRepository 
 		}
 		
 		$collection = $this->buildFilteredCollection($filters, $collection);
+		
+		//add the instructor_ids attribute
+		$collection = $this->addInsturctorIdsArray($collection);
+		
+		return $collection;
+	}
+	
+	
+	/**
+	 * Adds a "instructor_id" attribute to each event in given collection
+	 *
+	 * @param collection	Illuminate\Database\Eloquent\Collection instance
+	 *
+	 * @return Illuminate\Database\Eloquent\Collection
+	 */
+	public function addInsturctorIdsArray( $collection )
+	{
+		$collection = $collection->each(function($event)
+		{
+			$event->instructor_ids = $event->instructors()->lists('id');
+		});
 		
 		return $collection;
 	}
