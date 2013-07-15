@@ -188,4 +188,30 @@ abstract class BaseRepository
 		return $collection->get($returnFields);
 	}
 	
+	
+	/**
+	 * Reloads requested relationships on the given Eloquent $model
+	 *
+	 * This function is needed because:
+	 * For some off reason when saving related models, the corresponding keys
+	 * on the model instance do not automatically update. 
+	 *
+	 * @param model 		Eloquent model
+	 * @param relations		array containing relationship names
+	 *
+	 * @return Eloquent model
+	 */
+	public function reloadRelationships( $model, $relations )
+	{	
+		foreach($relations as $relation)
+		{
+			unset($model->$relation);
+			$model->$relation = $model->{$relation}()->getResults()->toArray();
+		}
+		
+		return $model;
+	}
+	
+	
+	
 }

@@ -27,6 +27,21 @@ class EloquentUserRepository extends BaseRepository implements UserRepository {
 	
 	
 	/**
+	 * get a single user by id but does not throw exception if the user is not found
+	 *
+	 * @param $userId  The id of the user
+	 *
+	 * @return array
+	 */
+	public function softFind($userId) 
+	{
+		$user = User::where('id', '=', $userId)->first();
+		
+		return $user;
+	}
+	
+	
+	/**
 	 * get all users
 	 *
 	 *
