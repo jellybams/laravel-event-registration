@@ -20,11 +20,9 @@ class EloquentEventRepository extends BaseRepository implements EventRepository 
 	 * @return array
 	 */
 	public function findWithAccess($eventId, $user, $accessType = 'read') 
-	{
-		$data = '';
-		
+	{	
 		//get events
-		$events = Event::with('attendees', 'venue')->where('id', '=', $eventId)->get();
+		$events = Event::with('instructors', 'attendees', 'venue')->where('id', '=', $eventId)->get();
 		
 		if( $events->isEmpty() )
 		{
@@ -32,7 +30,6 @@ class EloquentEventRepository extends BaseRepository implements EventRepository 
 		}
 		else
 		{
-			$events = $this->addInsturctorIdsArray($events);
 			$event = $events->first();
 			
 			if( !$event->allowAccess($accessType, $user) )
@@ -83,7 +80,7 @@ class EloquentEventRepository extends BaseRepository implements EventRepository 
 			$events = $user->events;
 		}
 		
-		$events = $this->addInsturctorIdsArray($events);
+		//$events = $this->addInsturctorIdsArray($events);
 		
 		return $events;
 	}
@@ -116,7 +113,7 @@ class EloquentEventRepository extends BaseRepository implements EventRepository 
 		$collection = $this->buildFilteredCollection($filters, $collection);
 		
 		//add the instructor_ids attribute
-		$collection = $this->addInsturctorIdsArray($collection);
+		//$collection = $this->addInsturctorIdsArray($collection);
 		
 		return $collection;
 	}

@@ -115,6 +115,8 @@ class Event extends Eloquent {
 			$attendee->delete();
 		}
 		
+		//TODO: delete instructor associations
+		
 		return parent::delete();
 	}
 	
