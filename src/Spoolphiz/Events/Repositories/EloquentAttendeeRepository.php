@@ -31,9 +31,7 @@ class EloquentAttendeeRepository implements AttendeeRepository {
 	 */
 	public function findWithAccess($eventId, $attendeeId, $currentUser, $accessType = 'read')
 	{
-		$attendee = Attendee::with('event')->where('id', '=', $attendeeId)->first();
-		
-		//dd($attendee->toArray());
+		$attendee = Attendee::with('event', 'comments', 'comments.author')->whereId($attendeeId)->first();
 		
 		if( empty($attendee) || empty($attendee->event) )
 		{

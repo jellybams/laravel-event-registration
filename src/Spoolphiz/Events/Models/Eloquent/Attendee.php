@@ -46,6 +46,10 @@ class Attendee extends Eloquent {
 		return $this->belongsTo('Spoolphiz\Events\Models\Eloquent\Event');
 	}
 	
+	public function comments()
+	{
+		return $this->hasMany('Spoolphiz\Events\Models\Eloquent\AttendeeComment');
+	}
 	
 	/**
 	 * Validate the model's attributes.
