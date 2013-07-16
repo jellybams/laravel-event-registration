@@ -44,7 +44,7 @@ class AttendeeComment extends Eloquent {
 	
 	public function attendee()
 	{
-		return $this->belongsTo('Attendee');
+		return $this->belongsTo('Spoolphiz\Events\Models\Eloquent\Attendee', 'attendee_id');
 	}
 	
 	/**
@@ -60,6 +60,57 @@ class AttendeeComment extends Eloquent {
 		{
 			throw new ValidationException($val);
 		}
+	}
+	
+	
+	
+	/**
+	 * decides if a user is allowed CRUD access to this resource - only happens if
+	 * the currently auth'd user = the author id of the comment
+	 *
+	 * @param $type		string - 'create', 'read', 'update', 'delete'
+	 * @param $user		Spoolphiz\Events\Models\Eloquent\User
+	 *
+	 * @return bool
+	 */
+	public function allowAccess( $type, $user ) 
+	{	
+		dd($this->attendee->event);
+		switch( $type )
+		{
+			case 'create':
+				if( $this->attendee->event->allowAccess( 'update', $user ) )
+				{
+					return true;
+				}
+			case 'update':
+			case 'delete':
+				if( $user->id == $this->user_id )
+				{
+					return true;
+				}
+			case 'read':
+				if( $user->isAdmin() || $user->isSalesRep() )
+				{
+					return true;
+				}
+				else
+				{
+					foreach( $this->instructors as $instructor )
+					{
+						if( $instructor->id == $user->id )
+						{
+							return true;
+						}
+					}
+				}
+			default:
+				return false;
+		}
+		
+		
+		
+		return false;
 	}
 	 
 }

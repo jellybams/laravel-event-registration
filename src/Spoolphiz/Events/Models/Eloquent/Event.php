@@ -136,15 +136,6 @@ class Event extends Eloquent {
 		{
 			case 'create':
 			case 'update':
-			case 'delete':
-				if( $user->isAdmin() )
-				{
-					return true;
-				}
-				else
-				{
-					return false;
-				}
 			case 'read':
 				if( $user->isAdmin() || $user->isSalesRep() )
 				{
@@ -159,6 +150,15 @@ class Event extends Eloquent {
 							return true;
 						}
 					}
+				}
+			case 'delete':
+				if( $user->isAdmin() )
+				{
+					return true;
+				}
+				else
+				{
+					return false;
 				}
 			default:
 				return false;
