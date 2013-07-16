@@ -39,6 +39,7 @@ class EventsServiceProvider extends ServiceProvider {
 		$this->app->bind('Spoolphiz\Events\Interfaces\UserRepository', 'Spoolphiz\Events\Repositories\EloquentUserRepository');
 		$this->app->bind('Spoolphiz\Events\Interfaces\CategoryRepository', 'Spoolphiz\Events\Repositories\EloquentCategoryRepository');
 		$this->app->bind('Spoolphiz\Events\Interfaces\CommentRepository', 'Spoolphiz\Events\Repositories\EloquentCommentRepository');
+		$this->app->bind('Spoolphiz\Events\Interfaces\GeoRepository', 'Spoolphiz\Events\Repositories\EloquentGeoRepository');
 	}
 
 	/**
