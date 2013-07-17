@@ -184,8 +184,17 @@ abstract class BaseRepository
 		
 		//set up return fields
 		$returnFields = $this->returnFields($filters);
-
-		return $collection->get($returnFields);
+		
+		try
+		{
+			$result = $collection->get($returnFields);
+		}
+		catch( \Exception $e )
+		{
+			App::abort(400, 'Invalid filter field(s), condition(s) or value supplied.');
+		}
+		
+		return $result;
 	}
 	
 	
