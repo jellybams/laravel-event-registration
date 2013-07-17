@@ -85,7 +85,7 @@ class AttendeeComment extends Eloquent {
 				}
 			case 'update':
 			case 'delete':
-				if( $user->id == $this->user_id )
+				if( $user->isAdmin() || $user->id == $this->user_id )
 				{
 					return true;
 				}
