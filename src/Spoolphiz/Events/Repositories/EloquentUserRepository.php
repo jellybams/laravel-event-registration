@@ -76,4 +76,9 @@ class EloquentUserRepository extends BaseRepository implements UserRepository {
 		return $key;
 	}
 	
+	
+	public function defaultRole()
+	{
+		return User::$userRoleIds['INSTRUCTOR'];
+	}
 }

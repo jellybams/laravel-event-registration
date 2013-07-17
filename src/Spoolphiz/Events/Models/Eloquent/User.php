@@ -10,7 +10,7 @@ use Illuminate\Auth\Reminders\RemindableInterface;
 
 class User extends Eloquent implements UserInterface, RemindableInterface {
 
-	protected $userRoleIds = array('ADMIN'=>1,
+	static $userRoleIds = array('ADMIN'=>1,
 									'SALESREP'=>2,
 									'INSTRUCTOR'=>3);
 
@@ -34,7 +34,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	 *
 	 * @var array
 	 */
-	protected $fillable = array('username', 'email', 'name', 'role_id', 'active', 'api_key');
+	protected $fillable = array('username', 'email', 'name', 'active', 'api_key');
 
 
 	/**
@@ -198,7 +198,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	 */
 	public function isAdmin()
 	{
-		if( $this->role_id == $this->userRoleIds['ADMIN'] ){
+		if( $this->role_id == static::$userRoleIds['ADMIN'] ){
 			return true;
 		}
 		else{
@@ -213,7 +213,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	 */
 	public function isSalesRep()
 	{
-		if( $this->role_id == $this->userRoleIds['SALESREP'] ){
+		if( $this->role_id == static::$userRoleIds['SALESREP'] ){
 			return true;
 		}
 		else{

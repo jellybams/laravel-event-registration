@@ -191,7 +191,7 @@ abstract class BaseRepository
 		}
 		catch( \Exception $e )
 		{
-			App::abort(400, 'Invalid filter field(s), condition(s) or value supplied.');
+			App::abort(400, 'Error applying filters, please check your syntax.');
 		}
 		
 		return $result;
