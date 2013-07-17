@@ -65,5 +65,37 @@ class Attendee extends Eloquent {
 			throw new ValidationException($val);
 		}
 	}
+	
+	
+	
+	/**
+	 * deletes an attendee and its associated comment records, updates event capacity
+	 *
+	 * @return bool
+	 */
+	public function delete() 
+	{
+		//delete associated comments
+		$comments = $this->comments;
+		
+		foreach( $comments as $item )
+		{
+			$item->delete();
+		}
+		
+		//update event capacity
+		$event = $this->event;
+		$event->capacity = $event->capacity + 1;
+		
+		if( !$event->save() )
+		{
+			App::abort('422', 'The attendee was deleted but the event capacity failed to update.');
+		}
+		
+		//delete the attendee record
+		return parent::delete();
+	}
+	
+	
 	 
 }
