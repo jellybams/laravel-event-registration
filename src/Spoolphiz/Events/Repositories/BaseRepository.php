@@ -108,7 +108,8 @@ abstract class BaseRepository
 		$allowedConditions = $this->allowedConditions();
 		$limit = (isset($filters['limit']) && is_numeric($filters['limit'])) ? $filters['limit'] : 0;
 		$page = (isset($filters['page']) && is_numeric($filters['page'])) ? $filters['page'] : 0;
-
+		$orderBy = (isset($filters['sort']) && is_array($filters['sort']) ) ? $filters['sort'] : array();
+		
 		$lastFilterFieldPos =  (count($filterFields)>0) ? count($filterFields)-1 : 0;
 		
 		// if filter fields exist...
@@ -180,6 +181,12 @@ abstract class BaseRepository
 				}
 			}
 			
+		}
+		
+		//check if there needs to be an ordering by any field
+		foreach( $orderBy as $item )
+		{			
+			$collection = $collection->orderBy($item['field'], $item['dir']);
 		}
 		
 		//set up return fields
