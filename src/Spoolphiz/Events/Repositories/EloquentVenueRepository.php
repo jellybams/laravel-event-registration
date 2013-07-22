@@ -4,7 +4,9 @@ use \App;
 use Spoolphiz\Events\Interfaces\VenueRepository;
 use Spoolphiz\Events\Models\Eloquent\Venue;
 
-class EloquentVenueRepository implements VenueRepository {
+class EloquentVenueRepository extends BaseRepository implements VenueRepository {
+
+	protected $repoModel = 'Spoolphiz\Events\Models\Eloquent\Venue';
 	
 	/**
 	 * get a single venue by id
@@ -41,6 +43,29 @@ class EloquentVenueRepository implements VenueRepository {
 		
 		return $venues;
 	}
+	
+	
+	/**
+	 * get venues based on filters
+	 *
+	 * @param filters	array - conditions for event retrieval 
+	 *
+	 * @return array
+	 */
+	public function filtered( $filters = array() )
+	{	
+		//filters come in an array containing json strings, parse to all array
+		$filters = $this->parseFilters($filters);
+				
+		//instantiate a collection object
+		$instance = new $this->repoModel;
+		$collection = $instance->newQuery();
+		
+		$collection = $this->buildFilteredCollection($filters, $collection);
+		
+		return $collection;
+	}
+	
 	
 	/**
 	 * creates new Spoolphiz/Venues/Models/Eloquent/Venue
