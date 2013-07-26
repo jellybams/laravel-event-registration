@@ -158,6 +158,12 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	
 		return md5(microtime());
 	}
+	
+	
+	public function getApiKey()
+	{
+		return $this->api_key;
+	}
 
 
 	/**
