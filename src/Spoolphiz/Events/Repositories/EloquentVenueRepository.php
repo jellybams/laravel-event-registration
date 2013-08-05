@@ -61,7 +61,7 @@ class EloquentVenueRepository extends BaseRepository implements VenueRepository 
 		$instance = new $this->repoModel;
 		$collection = $instance->newQuery();
 		
-		$collection = $this->buildFilteredCollection($filters, $collection);
+		$collection = $this->buildFilteredCollection($filters, $collection, 'venues');
 		
 		return $collection;
 	}

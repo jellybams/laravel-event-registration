@@ -26,9 +26,9 @@ abstract class BaseRepository
 	 *
 	 * @return array
 	 */
-	public function returnFields($filters)
+	public function returnFields($filters, $baseTable)
 	{
-		return (isset($filters['fields'])) ? $filters['fields'] : array('*') ;
+		return (isset($filters['fields'])) ? $filters['fields'] : array("$baseTable.*") ;
 	}
 	
 	
@@ -101,8 +101,8 @@ abstract class BaseRepository
 	 * @param collection	Illuminate\Database\Eloquent\Builder instance
 	 *
 	 * @return Illuminate\Database\Eloquent\Collection instance
-	 */
-	public function buildFilteredCollection($filters, $collection)
+	 */	
+	public function buildFilteredCollection($filters, $collection, $baseTable)
 	{	
 		$filterFields = (isset($filters['filter']['fields'])) ? $filters['filter']['fields'] : array();
 		$allowedConditions = $this->allowedConditions();
@@ -158,7 +158,7 @@ abstract class BaseRepository
 			unset($filterFields[$lastFilterFieldPos]);
 			$filters['filter']['fields'] = $filterFields;
 
-			return $this->buildFilteredCollection($filters, $collection);
+			return $this->buildFilteredCollection($filters, $collection, $baseTable);
 		}
 		//if filter fields don't exist, check if pagination filters exist
 		else
@@ -190,7 +190,7 @@ abstract class BaseRepository
 		}
 		
 		//set up return fields
-		$returnFields = $this->returnFields($filters);
+		$returnFields = $this->returnFields($filters, $baseTable);
 		
 		try
 		{
@@ -203,6 +203,8 @@ abstract class BaseRepository
 		
 		return $result;
 	}
+	
+	
 	
 	
 	/**

@@ -103,14 +103,23 @@ class EloquentEventRepository extends BaseRepository implements EventRepository 
 		if( $user->isAdmin() || $user->isSalesRep() )
 		{
 			$instance = new $this->repoModel;
-			$collection = $instance->newQuery()->with('instructors');
+			$collection = $instance->newQuery()
+									->with('instructors')
+									->join('venues', 'events.venue_id', '=', 'venues.id');
+
 		}
 		else
 		{
-			$collection = $user->events();
+			//$collection = $user->events()->get();
+			$instance = new $this->repoModel;
+			$collection = $instance->newQuery()
+									->with('instructors')
+									->join('event_instructor', 'events.id', '=', 'event_instructor.event_id')
+									->where('event_instructor.user_id', '=', $user->id)
+									->join('venues', 'events.venue_id', '=', 'venues.id');
 		}
 		
-		$collection = $this->buildFilteredCollection($filters, $collection);
+		$collection = $this->buildFilteredCollection($filters, $collection, 'events');
 		
 		//add the instructor_ids attribute
 		//$collection = $this->addInsturctorIdsArray($collection);
