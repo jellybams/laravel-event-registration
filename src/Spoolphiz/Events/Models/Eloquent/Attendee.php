@@ -97,5 +97,14 @@ class Attendee extends Eloquent {
 	}
 	
 	
-	 
+	/**
+     * Override default toArray function
+     */
+	public function toArray()
+	{
+		$this->comment_count  = $this->comments()->count();
+
+		return parent::toArray();
+	}
+	
 }
