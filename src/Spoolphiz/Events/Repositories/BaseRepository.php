@@ -99,6 +99,7 @@ abstract class BaseRepository
 	 *
 	 * @param filters 		array - conditions to apply to query
 	 * @param collection	Illuminate\Database\Eloquent\Builder instance
+	 * @param baseTable		the main table this query is acting on, for use in return fields if none specified
 	 *
 	 * @return Illuminate\Database\Eloquent\Collection instance
 	 */	
