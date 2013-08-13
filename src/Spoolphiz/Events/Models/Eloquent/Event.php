@@ -14,6 +14,11 @@ class Event extends Eloquent {
 									'create_seminaronly' => 0, 
 									'create_fullevent' => 1);
 
+	/**
+	 * List of possible event statuses
+	 */
+	public static $statuses = array(1 => 'Unpublished', 2 => 'Pending Approval', 3 => 'Active but not Shown', 4 => 'Published');
+
 	 /**
 	 * A white-list of fillable attributes - not really needed for this model but included for completeness
 	 *
@@ -65,6 +70,11 @@ class Event extends Eloquent {
 	{
 		return $this->belongsTo('Spoolphiz\Events\Models\Eloquent\Venue');
 	}
+
+	public function category()
+    {
+        return $this->belongsTo('Spoolphiz\Events\Models\Eloquent\Category');
+    }
 
 	
 	/**
