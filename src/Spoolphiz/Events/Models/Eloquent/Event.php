@@ -66,6 +66,11 @@ class Event extends Eloquent {
 		return $this->belongsTo('Spoolphiz\Events\Models\Eloquent\Venue');
 	}
 
+	public function category()
+    {
+        return $this->belongsTo('Spoolphiz\Events\Models\Eloquent\Category');
+    }
+
 	
 	/**
 	 * Validate the model's attributes.
