@@ -130,7 +130,13 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return parent::save();
 	}
 	
-
+	/**
+	* Relationships
+	*/
+	public function category()
+    {
+        return $this->belongsTo('Spoolphiz\Events\Models\Eloquent\Role');
+    }
 
 
 	public static function makeApiKey()
