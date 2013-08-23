@@ -8,6 +8,8 @@ interface UserRepository {
 	public function softFind($id);
 	
 	public function all();
+
+	public function filtered($filters = array() );
 	
 	public function newUser();
 	
