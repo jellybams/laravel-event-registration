@@ -6,12 +6,12 @@ use Spoolphiz\Events\Models\Eloquent\Attendee;
 use Spoolphiz\Events\Models\Eloquent\Venue;
 
 class Event extends Eloquent {
-	
+
 	protected $userRoleIds = array('INSTRUCTOR'=>3);
-	
-	protected $defaultAttribs = array('category_id' => 1, 
-									'status' => 0, 
-									'create_seminaronly' => 0, 
+
+	protected $defaultAttribs = array('category_id' => 1,
+									'status' => 0,
+									'create_seminaronly' => 0,
 									'create_fullevent' => 1);
 
 	/**
@@ -32,27 +32,27 @@ class Event extends Eloquent {
 	 * @var array
 	 */
 	protected $validators = array('category_id' => array('required', 'numeric'),
-								'venue_id' => array('numeric'), 
-								'start_date' => array('date'), 
-								'end_date' => array('date'), 
+								'venue_id' => array('numeric'),
+								'start_date' => array('date'),
+								'end_date' => array('date'),
 								'title' => array('max:100'),
-								'contact_phone' => array('max:30'), 
+								'contact_phone' => array('max:30'),
 								'seminar_price' => array('numeric'),
-								'full_price' => array('numeric'), 
+								'full_price' => array('numeric'),
 								'capacity' => array('numeric'),
 								'status' => array('required', 'numeric'),
 								'create_seminaronly' => array('in:0,1'),
 								'create_fullevent' => array('in:0,1')
 								);
-	
+
 	 /**
 	 * The database table used by the model.
 	 *
 	 * @var string
 	 */
 	protected $table = 'events';
-	
-	 
+
+
 	 /**
 	 * Relationships
 	 */
@@ -76,13 +76,13 @@ class Event extends Eloquent {
         return $this->belongsTo('Spoolphiz\Events\Models\Eloquent\Category');
     }
 
-	
+
 	/**
 	 * Validate the model's attributes.
 	 *
 	 * @return void
 	 */
-	public function validate() 
+	public function validate()
 	{
 		$val = Validator::make($this->attributes, $this->validators);
 
@@ -91,15 +91,15 @@ class Event extends Eloquent {
 			throw new \ValidationException($val);
 		}
 	}
-	
-	
+
+
 	/**
 	 * Makes sure required values are present and fills in defaults if not.
 	 * This function is to be run after fill() and before validate() to minimize risk of returning error to user
 	 *
 	 * @return void
 	 */
-	public function checkDefaults() 
+	public function checkDefaults()
 	{
 		foreach( $this->defaultAttribs as $key => $value )
 		{
@@ -109,28 +109,43 @@ class Event extends Eloquent {
 			}
 		}
 	}
-	
-	
+
+
 	/**
 	 * deletes a event and its associated attendee records
 	 *
 	 * @return bool
 	 */
-	public function delete() 
+	public function delete()
 	{
 		$attendees = $this->attendees;
-		
+
 		foreach( $attendees as $attendee )
 		{
 			$attendee->delete();
 		}
-		
+
 		//TODO: delete instructor associations
-		
+
 		return parent::delete();
 	}
-	
-	
+
+	/**
+	 * Overrides default fill function so that
+	 * it handles one day events. If the end_date
+	 * is set to null or empty string, it will 
+	 * be set to be equal to start_date
+	 * @param  array  $input input values
+	 */
+	public function fill(array $input)
+	{
+		if ((!isset($input['end_date']) OR !$input['end_date']) AND isset($input['start_date']) AND $input['start_date'])
+			$input['end_date'] = $input['start_date'];
+
+		return parent::fill($input);
+	}
+
+
 	/**
 	 * decides if a user is allowed CRUD access to this resource - only happens if
 	 * the user is admin, sales rep or listed as an instructor on the event
@@ -140,8 +155,8 @@ class Event extends Eloquent {
 	 *
 	 * @return bool
 	 */
-	public function allowAccess( $type, $user ) 
-	{	
+	public function allowAccess( $type, $user )
+	{
 		switch( $type )
 		{
 			case 'create':
@@ -173,9 +188,9 @@ class Event extends Eloquent {
 			default:
 				return false;
 		}
-		
-		
-		
+
+
+
 		return false;
 	}
 }
