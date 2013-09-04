@@ -5,6 +5,8 @@ use Spoolphiz\Events\Interfaces\UserRepository;
 use Spoolphiz\Events\Models\Eloquent\User;
 
 class EloquentUserRepository extends BaseRepository implements UserRepository {
+
+	protected $repoModel = 'Spoolphiz\Events\Models\Eloquent\User';
 	
 	/**
 	 * get a single user by id
@@ -52,6 +54,27 @@ class EloquentUserRepository extends BaseRepository implements UserRepository {
 		$users = User::all();
 		
 		return $users;
+	}
+
+	/**
+	 * get users based on filters
+	 *
+	 * @param user		Spoolphiz\Events\Models\Eloquent\User instance
+	 * @param filters	array - conditions for event retrieval 
+	 *
+	 * @return array
+	 */
+	public function filtered($filters = array() )
+	{	
+		//filters come in an array containing json strings, parse to all array
+		$filters = $this->parseFilters($filters);
+				
+		$instance = new $this->repoModel;
+		$collection = $instance->newQuery();
+		
+		$collection = $this->buildFilteredCollection($filters, $collection, 'users');
+		
+		return $collection;
 	}
 	
 	/**
