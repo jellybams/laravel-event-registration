@@ -117,20 +117,26 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	 */
 	public function save(array $options = array()) 
 	{
-		if( isset($this->password_confirmation) )
-		{
-			unset($this->password_confirmation);
-		}
-		
-		if( isset($this->password) )
+		if( isset($this->password) AND isset($this->password_confirmation))
 		{
 			$this->password = Hash::make($this->password);
+		}
+
+		if( isset($this->password_confirmation))
+		{
+			unset($this->password_confirmation);
 		}
 		
 		return parent::save();
 	}
 	
-
+	/**
+	* Relationships
+	*/
+	public function category()
+    {
+        return $this->belongsTo('Spoolphiz\Events\Models\Eloquent\Role');
+    }
 
 
 	public static function makeApiKey()
