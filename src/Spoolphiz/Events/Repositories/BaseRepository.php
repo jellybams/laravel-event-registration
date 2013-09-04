@@ -225,7 +225,7 @@ abstract class BaseRepository
 		foreach($relations as $relation)
 		{
 			unset($model->$relation);
-			$model->$relation = $model->{$relation}()->getResults()->toArray();
+			$model->$relation = $model->{$relation}()->getResults();
 		}
 		
 		return $model;
