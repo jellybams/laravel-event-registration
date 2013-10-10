@@ -66,9 +66,6 @@ class EloquentUserRepository extends BaseRepository implements UserRepository {
 	 */
 	public function filtered($filters = array() )
 	{	
-		//filters come in an array containing json strings, parse to all array
-		$filters = $this->parseFilters($filters);
-				
 		$instance = new $this->repoModel;
 		$collection = $instance->newQuery();
 		

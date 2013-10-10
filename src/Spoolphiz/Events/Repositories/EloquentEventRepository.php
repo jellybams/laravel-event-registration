@@ -96,9 +96,6 @@ class EloquentEventRepository extends BaseRepository implements EventRepository 
 	 */
 	public function filtered( $user, $filters = array() )
 	{	
-		//filters come in an array containing json strings, parse to all array
-		$filters = $this->parseFilters($filters);
-				
 		//instantiate a collection object based on the current user's role
 		if( $user->isAdmin() || $user->isSalesRep() )
 		{
