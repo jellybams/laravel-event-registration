@@ -19,9 +19,6 @@ class EloquentGeoRepository extends BaseRepository implements GeoRepository {
 	{
 		if( !empty($filters) )
 		{
-			//filters come in an array containing json strings, parse to all array
-			$filters = $this->parseFilters($filters);
-
 			//instantiate a collection object
 			$instance = new $this->countryModel;
 			$collection = $instance->newQuery();

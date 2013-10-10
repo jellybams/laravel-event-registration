@@ -54,9 +54,6 @@ class EloquentVenueRepository extends BaseRepository implements VenueRepository 
 	 */
 	public function filtered( $filters = array() )
 	{	
-		//filters come in an array containing json strings, parse to all array
-		$filters = $this->parseFilters($filters);
-				
 		//instantiate a collection object
 		$instance = new $this->repoModel;
 		$collection = $instance->newQuery();
