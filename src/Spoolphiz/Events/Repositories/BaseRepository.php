@@ -31,33 +31,6 @@ abstract class BaseRepository
 		return (isset($filters['fields'])) ? $filters['fields'] : array("$baseTable.*") ;
 	}
 	
-	
-	/**
-	 * laravel's Input::get returns key value pairs for filter params but the value
-	 * is not json decoded automatically, this function performs that process
-	 *
-	 * @param array 	filters obtained from Input::get()
-	 *
-	 * @return array 	
-	 */
-	public function parseFilters($filters)
-	{
-		foreach( $filters as &$item )
-		{
-			if (get_magic_quotes_gpc()) 
-			{
-				$item = stripslashes($item);
-			}
-			
-			if (is_string($item)) {
-				$item = json_decode($item, true);
-			}
-		}
-		
-		return $filters;
-	}
-	
-	
 	/**
 	 * translates non-basic filtering conditions into strings that can be passed
 	 * the the query builder using where() or orWhere()
