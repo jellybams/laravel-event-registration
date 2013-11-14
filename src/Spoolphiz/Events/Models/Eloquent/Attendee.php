@@ -106,5 +106,23 @@ class Attendee extends Eloquent {
 
 		return parent::toArray();
 	}
+
+	/**
+	 * Round the amount if it has more than
+	 * 2 decimals
+	 */
+	public function setAmountPaidAttribute($value)
+    {
+        $this->attributes['amount_paid'] = is_int($value) ? $value : round($value, 2);
+    }
+
+    /**
+	 * Round the amount if it has more than
+	 * 2 decimals
+	 */
+    public function setTotalAmountAttribute($value)
+    {
+        $this->attributes['total_amount'] = is_int($value) ? $value : round($value, 2);
+    }
 	
 }

@@ -178,29 +178,24 @@ abstract class BaseRepository
 
 			return $this->buildFilteredCollection($filters, $collection, $baseTable);
 		}
-		//if filter fields don't exist, check if pagination filters exist
+			
+		//do we want the total number of records with the criteria so far?
+		if( isset($filters['total']) && $filters['total'] == 1 )
+		{
+			return array( "total" => $collection->count() );
+		}
 		else
 		{
-			
-			//do we want just the total number of records with the critara so far?
-			if( isset($filters['total']) && $filters['total'] == 1 )
+			//at this point all filter fields were recursively applied to $collection
+			//or there weren't any filter field to begin with... either way lets
+			//set up pagination of records
+			if( $limit !== 0 )
 			{
-				return array( "total" => $collection->count() );
+				$collection = $collection->take($limit);
+				$collection = $collection->skip($limit*$page);
 			}
-			else
-			{
-				//at this point all filter fields were recursively applied to $collection
-				//or there weren't any filter field to begin with... either way lets
-				//set up pagination of records
-				if( $limit !== 0 )
-				{
-					$collection = $collection->take($limit);
-					$collection = $collection->skip($limit*$page);
-				}
-			}
-			
 		}
-		
+			
 		//check if there needs to be an ordering by any field
 		foreach( $orderBy as $item )
 		{			
@@ -242,7 +237,7 @@ abstract class BaseRepository
 		foreach($relations as $relation)
 		{
 			unset($model->$relation);
-			$model->$relation = $model->{$relation}()->getResults()->toArray();
+			$model->$relation = $model->{$relation}()->getResults();
 		}
 		
 		return $model;
