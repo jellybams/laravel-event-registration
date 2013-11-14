@@ -14,7 +14,7 @@ abstract class BaseRepository
 	public function allowedConditions()
 	{
 		return array( 'simple' => array('=', '!=', '<', '<=', '>', '>=', 'in', 'not in'), 
-						'translate' => array('starts with', 'ends with', 'contains', 'not contains')
+						'translate' => array('starts with', 'ends with', 'contains', 'not contains', 'search')
 					);
 	}
 	
@@ -49,7 +49,9 @@ abstract class BaseRepository
 				$item = stripslashes($item);
 			}
 			
-			$item = json_decode($item, true);
+			if (is_string($item)) {
+				$item = json_decode($item, true);
+			}
 		}
 		
 		return $filters;
@@ -84,6 +86,14 @@ abstract class BaseRepository
 				$filterField['operator'] = 'NOT LIKE';
 				$filterField['value'] = '%'.$filterField['value'].'%';
 				break;
+			case 'search':
+				$filterField['operator'] = 'MATCH';
+				//clean whitespace
+				$filterField['value'] = trim(preg_replace('# +#', ' ', $filterField['value']));
+				//Prepare boolean mode AND operation
+				$filterField['value'] = '+' . str_replace(" ", " +", $filterField['value']);
+				break;
+
 			/*case 'in':
 				$filterField['operator'] = 'IN';
 				$filterField['value'] = '('.implode(',', $filterField['value']).')';
@@ -141,6 +151,13 @@ abstract class BaseRepository
 				
 				$collection = $collection->{$filterMethod}($filterFields[$lastFilterFieldPos]['name'],
 															$filterFields[$lastFilterFieldPos]['value']);
+			}
+			elseif ($operator == 'MATCH')
+			{
+				$collection = $collection->whereRaw(sprintf("MATCH(%s) AGAINST (? IN BOOLEAN MODE)",
+				                                            $collection->getQuery()->getConnection()->getTablePrefix() . $filterFields[$lastFilterFieldPos]['name']),
+				                                    array($filterFields[$lastFilterFieldPos]['value']));
+
 			}
 			else
 			{
