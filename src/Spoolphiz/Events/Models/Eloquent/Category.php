@@ -15,14 +15,14 @@ class Category extends Eloquent {
 	 *
 	 * @var array
 	 */
-	protected $fillable = array('label');
+	protected $fillable = array('label', 'link');
 
 	 /**
 	 * Validator rules
 	 *
 	 * @var array
 	 */
-	protected $validators = array('label' => array('required', 'max:40'));
+	protected $validators = array('label' => array('required', 'max:40'), 'link' => array('required', 'url'));
 
 	 /**
 	 * The database table used by the model.
