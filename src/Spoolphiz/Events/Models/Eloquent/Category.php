@@ -78,7 +78,7 @@ class Category extends Eloquent {
 		//update the venue id to 1 for the events
 		if( !empty($relatedEventIds) )
 		{
-			$result = DB::table('events')->whereIn('id', $relatedEventIds)->update(array('category' => 1));
+			$result = DB::table('events')->whereIn('id', $relatedEventIds)->update(array('category_id' => 1));
 		}
 		
 		return parent::delete();
