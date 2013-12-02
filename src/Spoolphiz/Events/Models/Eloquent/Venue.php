@@ -116,6 +116,7 @@ class Venue extends Eloquent {
 		if( !empty($this->zip) ){ $address .= ', '.$this->zip; }
 		
 		$address .= ' '.$this->country->name;
+		$address = urlencode($address);
 		
 		$geocoder = new GoogleGeocoder;
 		$geocoder->geocodeAddress($address);
