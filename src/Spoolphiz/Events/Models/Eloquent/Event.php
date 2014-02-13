@@ -171,6 +171,7 @@ class Event extends Eloquent {
 		//the BaseRepository::reloadRelationships();
 		unset($copy->instructors);
 		unset($copy->venue);
+		unset($copy->attendees);
 		
 		$result = $copy->save();
 		
