@@ -143,13 +143,15 @@ The following functionality is available to be passed in as filter fields. IF wo
 {
 	total : 0|1 //returns the count of events matching the rest of the filter criteria
 	filter : { 
-				type : 'AND', 
+				type : "AND"|"OR", //it is currently not possible to mix AND and OR in the same query
 				filter : [
-							{},
-							{},
+							{
+								name : "events.start_date",
+								operator: ">=" //possible operators are: =, !=, <, <=, >, >=, in, not in, starts with, ends with, contains, not contains, search
+								value : "2014-02-02"
+							}
 							//add more field queries here
 						]
-
 			},
 	sort : [
 				{field : "venues.city", dir : "ASC"} //you can add more fields to sort by, format is table_name.field_name
