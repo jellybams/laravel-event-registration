@@ -38,9 +38,9 @@ class EloquentGeoRepository extends BaseRepository implements GeoRepository {
 	/**
 	 * get a single country by id
 	 *
-	 * @param $filters  Filters to use when querying countries
+	 * @param $id  The country id to get
 	 *
-	 * @return collection
+	 * @return Spoolphiz\Events\Models\Eloquent\Country
 	 */
 	public function getCountry($id) 
 	{

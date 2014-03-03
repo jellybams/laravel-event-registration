@@ -137,7 +137,7 @@ Notice there is a check for Input data at the beginning of getList(), searching/
 
 ###Searching/Filtering Data
 
-The following functionality is available to be passed in as filter fields. IF working in a single page app, you should JSON.stringify() each of the filter variables. This means you'll also need to decode the filter fields on the server side. If you're not using this package as part of an API you can simply create an associative array with the same structure as below and pass that to the filtered() function of each resource repository (venues, events, users, attendees).
+The following functionality is available to be passed in as filter fields. If working in a single page app, you should JSON.stringify() each of the filter variables. This means you'll also need to decode the filter fields on the server side. If you're not using this package as part of an API you can simply create an associative array with the same structure as below and pass that to the filtered() function of each resource repository (venues, events, users, attendees).
 
 ```javascript
 {

@@ -13,7 +13,7 @@ class EloquentVenueRepository extends BaseRepository implements VenueRepository 
 	 *
 	 * @param $venueId  The id of the venue
 	 *
-	 * @return array
+	 * @return Spoolphiz\Events\Models\Eloquent\Venue
 	 */
 	public function find($venueId) 
 	{	
@@ -35,7 +35,7 @@ class EloquentVenueRepository extends BaseRepository implements VenueRepository 
 	 *
 	 * @param $venueId  The id of the venue
 	 *
-	 * @return array
+	 * @return Collection
 	 */
 	public function all()
 	{	
@@ -50,7 +50,7 @@ class EloquentVenueRepository extends BaseRepository implements VenueRepository 
 	 *
 	 * @param filters	array - conditions for event retrieval 
 	 *
-	 * @return array
+	 * @return Collection
 	 */
 	public function filtered( $filters = array() )
 	{	

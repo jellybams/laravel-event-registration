@@ -34,10 +34,10 @@ class EloquentCommentRepository implements CommentRepository {
 
 	
 	/**
-	 * creates new Spoolphiz/Venues/Models/Eloquent/Venue
+	 * creates new Spoolphiz/Venues/Models/Eloquent/Comment
 	 *
 	 *
-	 * @return Spoolphiz/Venues/Models/Eloquent/Venue
+	 * @return Spoolphiz/Venues/Models/Eloquent/Comment
 	 */
 	public function newComment()
 	{	

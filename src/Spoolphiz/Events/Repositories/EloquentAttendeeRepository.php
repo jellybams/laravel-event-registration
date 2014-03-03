@@ -25,6 +25,7 @@ class EloquentAttendeeRepository implements AttendeeRepository {
 	 * 
 	 * @param $eventId		int
 	 * @param $attendeeId	int
+	 * @param $currentUser	Spoolphiz\Events\Models\Eloquent\User
 	 * @param $accessType	string - 'create', 'read', 'update', 'delete'
 	 *
 	 * @return Spoolphiz\Events\Models\Eloquent\Attendee

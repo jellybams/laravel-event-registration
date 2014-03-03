@@ -13,7 +13,7 @@ class EloquentUserRepository extends BaseRepository implements UserRepository {
 	 *
 	 * @param $userId  The id of the user
 	 *
-	 * @return array
+	 * @return Spoolphiz\Events\Models\Eloquent\User
 	 */
 	public function find($userId) 
 	{
@@ -33,7 +33,7 @@ class EloquentUserRepository extends BaseRepository implements UserRepository {
 	 *
 	 * @param $userId  The id of the user
 	 *
-	 * @return array
+	 * @return Spoolphiz\Events\Models\Eloquent\User
 	 */
 	public function softFind($userId) 
 	{
@@ -47,7 +47,7 @@ class EloquentUserRepository extends BaseRepository implements UserRepository {
 	 * get all users
 	 *
 	 *
-	 * @return array
+	 * @return Collection
 	 */
 	public function all()
 	{	
@@ -62,7 +62,7 @@ class EloquentUserRepository extends BaseRepository implements UserRepository {
 	 * @param user		Spoolphiz\Events\Models\Eloquent\User instance
 	 * @param filters	array - conditions for event retrieval 
 	 *
-	 * @return array
+	 * @return Collection
 	 */
 	public function filtered($filters = array() )
 	{	
@@ -88,7 +88,12 @@ class EloquentUserRepository extends BaseRepository implements UserRepository {
 	}
 	
 	
-	
+	/**
+	 * creates new API key
+	 *
+	 *
+	 * @return string
+	 */
 	public function makeApiKey()
 	{
 		$key = User::makeApiKey();
@@ -97,6 +102,12 @@ class EloquentUserRepository extends BaseRepository implements UserRepository {
 	}
 	
 	
+	/**
+	 * get default role
+	 *
+	 *
+	 * @return string
+	 */
 	public function defaultRole()
 	{
 		return User::$userRoleIds['INSTRUCTOR'];
