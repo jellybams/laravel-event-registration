@@ -17,7 +17,7 @@ class EloquentEventRepository extends BaseRepository implements EventRepository 
 	 * @param $user  		Spoolphiz\Events\Models\Eloquent\User object
 	 * @param $accessType  	string - 'create', 'read', 'update', 'delete'
 	 *
-	 * @return array
+	 * @return Spoolphiz\Events\Models\Eloquent\Event
 	 */
 	public function findWithAccess($eventId, $user, $accessType = 'read') 
 	{	
@@ -49,7 +49,7 @@ class EloquentEventRepository extends BaseRepository implements EventRepository 
 	 *
 	 * @param $eventId  The id of the event
 	 *
-	 * @return array
+	 * @return Spoolphiz\Events\Models\Eloquent\Event
 	 */
 	public function newEvent() 
 	{	
@@ -63,10 +63,9 @@ class EloquentEventRepository extends BaseRepository implements EventRepository 
 	/**
 	 * get all events or all of an instructor's events
 	 *
-	 * @param user  User
-	 * @param filters  array - conditions for event retrieval 
+	 * @param user User
 	 *
-	 * @return array
+	 * @return Collection
 	 */
 	public function all( $user )
 	{	
@@ -92,7 +91,7 @@ class EloquentEventRepository extends BaseRepository implements EventRepository 
 	 * @param user		Spoolphiz\Events\Models\Eloquent\User instance
 	 * @param filters	array - conditions for event retrieval 
 	 *
-	 * @return array
+	 * @return Collection
 	 */
 	public function filtered( $user, $filters = array() )
 	{	

@@ -20,7 +20,7 @@ interface EventRepository {
 	 *
 	 * @param $user  		Spoolphiz\Events\Models\Eloquent\User object
 	 *
-	 * @return array
+	 * @return Collection
 	 */
 	public function all($user);
 	
@@ -32,7 +32,7 @@ interface EventRepository {
 	 * @param $user  		Spoolphiz\Events\Models\Eloquent\User object
 	 * @param $filters  	array - contains filtering requirements for event fetching
 	 *
-	 * @return array
+	 * @return Collection
 	 */
 	public function filtered($user, $filters);
 	
@@ -46,12 +46,12 @@ interface EventRepository {
 	
 	
 	/**
-	 * Deletes an event and associated attendee records
+	 * Adds a "instructor_id" attribute to each event in given collection
 	 *
-	 * @param $id  	The id of the event
+	 * @param collection	Illuminate\Database\Eloquent\Collection instance
 	 *
-	 * @return void
+	 * @return Illuminate\Database\Eloquent\Collection
 	 */
-	//public function delete($id);
+	public function addInsturctorIdsArray( $collection );
 	
 }

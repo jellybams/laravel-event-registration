@@ -11,7 +11,7 @@ class EloquentCategoryRepository implements CategoryRepository {
 	 *
 	 * @param $categoryId  The id of the category
 	 *
-	 * @return array
+	 * @return Spoolphiz\Events\Models\Eloquent\Category
 	 */
 	public function find($categoryId) 
 	{	
@@ -31,7 +31,7 @@ class EloquentCategoryRepository implements CategoryRepository {
 	 *
 	 * @param $categoryId  The id of the category
 	 *
-	 * @return array
+	 * @return Collection
 	 */
 	public function all()
 	{	
