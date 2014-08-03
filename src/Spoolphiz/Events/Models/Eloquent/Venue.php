@@ -108,9 +108,9 @@ class Venue extends Eloquent {
 	 * @return bool
 	 */
 	public function geocode()
-	{	
-		$address = $this->address1;
-		
+	{
+		$address = "";
+		if( !empty($this->address1) && trim($this->address1) != 'TBD') { $address .= $this->address1; }
 		if( !empty($this->city) && trim($this->city) != 'TBD'){ $address .= ', '.$this->city; }
 		if( !empty($this->state) && trim($this->state) != 'TBD' ){ $address .= ', '.$this->state; }
 		if( !empty($this->zip) && trim($this->zip) != 'TBD' ){ $address .= ', '.$this->zip; }
