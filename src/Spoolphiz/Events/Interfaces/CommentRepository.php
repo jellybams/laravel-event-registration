@@ -15,6 +15,12 @@ interface CommentRepository {
 	public function findWithAccess($id, $user, $accessType);
 	
 	
+	/**
+	 * creates new Spoolphiz/Venues/Models/Eloquent/Comment
+	 *
+	 *
+	 * @return Spoolphiz/Venues/Models/Eloquent/Comment
+	 */
 	public function newComment();
 	
 }
