@@ -24,7 +24,7 @@ class Event extends Eloquent {
 	 *
 	 * @var array
 	 */
-	protected $fillable = array('category_id', 'venue_id', 'start_date', 'end_date', 'title', 'contact_phone', 'seminar_price', 'full_price', 'capacity', 'status', 'create_seminaronly', 'create_fullevent');
+	protected $fillable = array('category_id', 'venue_id', 'start_date', 'end_date', 'title', 'contact_phone', 'seminar_price', 'full_price', 'capacity', 'status', 'create_seminaronly', 'create_fullevent', 'designation_id');
 
 	 /**
 	 * Validator rules
@@ -42,7 +42,8 @@ class Event extends Eloquent {
 								'capacity' => array('numeric'),
 								'status' => array('required', 'numeric'),
 								'create_seminaronly' => array('in:0,1'),
-								'create_fullevent' => array('in:0,1')
+								'create_fullevent' => array('in:0,1'),
+								'designation_id' => array('numeric'),
 								);
 
 	 /**
